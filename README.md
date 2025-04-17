@@ -8,6 +8,7 @@ Here’s a cleaner, more professional, and visitor-friendly version of your READ
 
 📦 **Repository**: [GitHub - mobile_application](https://github.com/fuadhossainnishad/mobile_application.git)
 
+**UI/UX design link**: (https://www.figma.com/design/pnySRrCbu7aKed3jNnWvlV/FoodPos?node-id=100-115&t=W5ovMaSDlDNBzvNW-1)
 ---
 
 ## 🚀 Features

@@ -8,7 +8,7 @@ class AuthService {
   Future<String?> signIn({required String email, required String password}) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return null; // Success
+      return null;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'user-not-found':
@@ -62,7 +62,7 @@ class AuthService {
   Future<String> resetPassword({required String email}) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
-      return 'Password reset email sent. Check your inbox.';
+      return 'Password reset email sent, check your inbox.';
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'invalid-email':

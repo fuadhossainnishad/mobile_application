@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 Here’s a cleaner, more professional, and visitor-friendly version of your README for the **FoodPOS** project. It improves structure, grammar, clarity, and adds clickable sections for better navigation.
 
 ---
@@ -244,3 +245,4 @@ For issues, please open a [GitHub Issue](https://github.com/fuadhossainnishad/mo
 ---
 
 Let me know if you'd like a custom badge or banner for the top of the README, or if you want to turn this into a GitHub Pages site!
+

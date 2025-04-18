@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Here’s a cleaner, more professional, and visitor-friendly version of your README for the **FoodPOS** project. It improves structure, grammar, clarity, and adds clickable sections for better navigation.
 
 ---

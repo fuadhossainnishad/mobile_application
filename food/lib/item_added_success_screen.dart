@@ -8,6 +8,7 @@ class ItemAddedSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get current date formatted
     final String currentDate = DateFormat('d MMMM yyyy').format(DateTime.now());
 
     return Scaffold(
@@ -62,8 +63,9 @@ class ItemAddedSuccessScreen extends StatelessWidget {
             ),
           ),
         ],
-        leadingWidth: 0,
-        automaticallyImplyLeading: false,
+        leadingWidth:
+            0, // Remove leading width as we're using title for date and add item
+        automaticallyImplyLeading: false, // Remove back button
       ),
       body: Center(
         child: Padding(

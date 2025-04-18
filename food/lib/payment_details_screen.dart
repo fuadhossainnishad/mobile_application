@@ -19,8 +19,7 @@ class PaymentDetailsScreen extends StatefulWidget {
 class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
   String? selectedPaymentMethod;
   String? transactionId;
-  final TextEditingController _transactionIdController =
-      TextEditingController();
+  final TextEditingController _transactionIdController = TextEditingController();
   bool _isLoading = false;
   String? _role;
   final _backendService = BackendService();
@@ -89,8 +88,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
                   selectedPaymentMethod = paymentMethod;
                   transactionId = _transactionIdController.text;
                 });
-                _logger.d(
-                    'Selected payment method: $paymentMethod, transactionId: $transactionId');
+                _logger.d('Selected payment method: $paymentMethod, transactionId: $transactionId');
                 _transactionIdController.clear();
                 Navigator.pop(context);
               },
@@ -119,8 +117,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
     if (selectedPaymentMethod != 'Cash' &&
         (transactionId == null || transactionId!.isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Please enter payment gateway mobile number')),
+        const SnackBar(content: Text('Please enter transaction ID')),
       );
       return;
     }
@@ -210,11 +207,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
             child: Row(
               children: [
                 Text(
-                  _role == 'Admin'
-                      ? 'Admin'
-                      : _role == 'Buyer'
-                          ? 'Buyer'
-                          : 'Guest',
+                  _role == 'Admin' ? 'Admin' : _role == 'Buyer' ? 'Buyer' : 'Guest',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -287,26 +280,19 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
             ),
           Expanded(
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
               child: GridView.count(
                 crossAxisCount: 3,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 childAspectRatio: 1.0,
                 children: [
-                  _buildPaymentOption(
-                      context, 'Cash', 'assets/icons/cash_icon.png'),
-                  _buildPaymentOption(
-                      context, 'bKash', 'assets/icons/bkash_icon.png'),
-                  _buildPaymentOption(
-                      context, 'Nagad', 'assets/icons/nagad_icon.png'),
-                  _buildPaymentOption(
-                      context, 'Rocket', 'assets/icons/rocket_icon.png'),
-                  _buildPaymentOption(
-                      context, 'VISA', 'assets/icons/visa_icon.png'),
-                  _buildPaymentOption(context, 'Mastercard',
-                      'assets/icons/mastercard_icon.png'),
+                  _buildPaymentOption(context, 'Cash', 'assets/icons/cash_icon.png'),
+                  _buildPaymentOption(context, 'bKash', 'assets/icons/bkash_icon.png'),
+                  _buildPaymentOption(context, 'Nagad', 'assets/icons/nagad_icon.png'),
+                  _buildPaymentOption(context, 'Rocket', 'assets/icons/rocket_icon.png'),
+                  _buildPaymentOption(context, 'VISA', 'assets/icons/visa_icon.png'),
+                  _buildPaymentOption(context, 'Mastercard', 'assets/icons/mastercard_icon.png'),
                 ],
               ),
             ),
@@ -345,8 +331,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
     );
   }
 
-  Widget _buildPaymentOption(
-      BuildContext context, String label, String imagePath) {
+  Widget _buildPaymentOption(BuildContext context, String label, String imagePath) {
     bool isSelected = selectedPaymentMethod == label;
 
     return Card(
@@ -397,9 +382,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? Colors.deepOrange.withOpacity(0.1)
-                      : Colors.grey[100],
+                  color: isSelected ? Colors.deepOrange.withOpacity(0.1) : Colors.grey[100],
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(

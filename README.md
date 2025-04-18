@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 Here’s a cleaner, more professional, and visitor-friendly version of your README for the **FoodPOS** project. It improves structure, grammar, clarity, and adds clickable sections for better navigation.
 
 ---
@@ -246,3 +247,21 @@ For issues, please open a [GitHub Issue](https://github.com/fuadhossainnishad/mo
 
 Let me know if you'd like a custom badge or banner for the top of the README, or if you want to turn this into a GitHub Pages site!
 
+=======
+# food
+
+A new Flutter project.
+
+## Getting Started
+
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
+>>>>>>> mahazabin_5755

@@ -36,14 +36,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     try {
       final role = await _backendService.getUserRole();
-      Map<String, dynamic> sales = {'totalOrders': 0, 'totalSales': 0.0};
-      List<Map<String, dynamic>> orders = [];
-
-      // Only fetch sales and orders for Admin role
-      if (role == 'Admin') {
-        sales = await _backendService.getTodaySales();
-        orders = await _backendService.getOrders();
-      }
+      final sales = await _backendService.getTodaySales();
+      final orders = await _backendService.getOrders();
 
       if (!mounted) return;
 
@@ -165,46 +159,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (_role == 'Admin') ...[
-                      Card(
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Today\'s Sales',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                    Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Today\'s Sales',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildStatCard(
+                                  'Total Orders',
+                                  _salesData['totalOrders'].toString(),
+                                  Icons.receipt_long,
                                 ),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  _buildStatCard(
-                                    'Total Orders',
-                                    _salesData['totalOrders'].toString(),
-                                    Icons.receipt_long,
-                                  ),
-                                  _buildStatCard(
-                                    'Revenue',
-                                    '${_salesData['totalSales'].toStringAsFixed(2)} BDT',
-                                    Icons.attach_money,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                _buildStatCard(
+                                  'Revenue',
+                                  '${_salesData['totalSales'].toStringAsFixed(2)} BDT',
+                                  Icons.attach_money,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 16),
+                    ),
+                    const SizedBox(height: 16),
+                    if (_role == 'Admin') ...[
                       const Text(
                         'Recent Orders',
                         style: TextStyle(

@@ -1,10 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:food/auth/backend_service.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 
-
 class AddItemScreen extends StatefulWidget {
-  const AddItemScreen({Key? key}) : super(key: key);
+  const AddItemScreen({super.key});
 
   @override
   State<AddItemScreen> createState() => _AddItemScreenState();
@@ -14,24 +15,12 @@ class _AddItemScreenState extends State<AddItemScreen> {
   final _formKey = GlobalKey<FormState>();
   String _name = '';
   double _price = 0.0;
-  String? _selectedImagePath;
+  File? _imageFile;
   bool _isLoading = false;
   String? _role;
   String? _error;
   final _backendService = BackendService();
   final _logger = Logger();
-
-  static const List<String> _availableImages = [
-    'images/burger.jpg',
-    'images/pizza.png',
-    'images/cappucchino.png',
-    'images/crab.png',
-    'images/french_fry.png',
-    'images/pasta.png',
-    'images/rice_bowl1.png',
-    'images/rice_bowl2.png',
-    'images/watermelon_juice.png',
-  ];
 
   @override
   void initState() {
@@ -44,150 +33,56 @@ class _AddItemScreenState extends State<AddItemScreen> {
       _isLoading = true;
       _error = null;
     });
-    try {
-      final role = await _backendService.getUserRole();
-      _logger.d('AddItemScreen fetched role: $role');
-      if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-        _role = role;
-        if (role == null) {
-          _error = 'Failed to fetch user role';
-        } else if (role != 'Admin') {
-          _error = 'Access restricted to admins';
-        }
-      });
-      if (role != null && role != 'Admin' && mounted) {
+    final role = await _backendService.getUserRole();
+    _logger.d('AddItemScreen fetched role: $role');
+    if (!mounted) return;
+    setState(() {
+      _isLoading = false;
+      if (role == null) {
+        _error = 'Failed to fetch user role';
+      } else if (role != 'Admin') {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Access restricted to admins')),
         );
+      } else {
+        _role = role;
       }
-    } catch (e) {
-      _logger.e('Role check error: $e');
-      if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-        _error = 'Error checking role: $e';
-      });
-    }
+    });
   }
 
-  void _pickImage() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Select Image'),
-        content: SizedBox(
-          width: double.maxFinite,
-          height: 300,
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-              childAspectRatio: 1,
-            ),
-            itemCount: _availableImages.length,
-            itemBuilder: (context, index) {
-              final imagePath = _availableImages[index];
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedImagePath = imagePath;
-                    _logger.d('Selected image: $imagePath');
-                  });
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: _selectedImagePath == imagePath ? Colors.deepOrange : Colors.grey,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Image.asset(
-                    imagePath,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      _logger.e('Error loading image: $imagePath');
-                      return const Icon(Icons.error);
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
-    );
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+        _logger.d('Image picked: ${pickedFile.path}');
+      });
+    } else {
+      _logger.d('No image picked');
+    }
   }
 
   Future<void> _addItem() async {
-    if (!_formKey.currentState!.validate()) {
-      _logger.d('Form validation failed');
-      return;
-    }
-    if (_selectedImagePath == null) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an image')),
-      );
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
     });
-    String? error;
-    try {
-      _logger.d('Attempting to add item: $_name, price: $_price, image: $_selectedImagePath');
-      error = await _backendService.addMenuItem(
-        name: _name,
-        price: _price,
-        imagePath: _selectedImagePath!,
-      ).timeout(
-        const Duration(seconds: 10),
-        onTimeout: () {
-          _logger.e('Add item timed out after 10 seconds');
-          return 'Operation timed out. Please try again.';
-        },
-      );
-    } catch (e) {
-      _logger.e('Add item exception: $e');
-      error = 'Error adding item: $e';
-    }
+    final error = await _backendService.addMenuItem(
+      name: _name,
+      price: _price,
+      imageFile: _imageFile,
+    );
     if (!mounted) return;
     setState(() {
       _isLoading = false;
     });
     if (error != null) {
-      _logger.e('Add item error: $error');
-      String errorMessage = error;
-      if (error.contains('User not logged in')) {
-        errorMessage = 'Please log in to add an item';
-      } else if (error.contains('Failed to add item')) {
-        errorMessage = 'Failed to add item. Please try again';
-      } else if (error.contains('timed out')) {
-        errorMessage = 'Request timed out. Check your connection.';
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
     } else {
-      _logger.d('Item added successfully: $_name');
-      if (!mounted) return;
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Item added successfully')),
-      );
     }
   }
 
@@ -267,22 +162,20 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) =>
-                    value!.isEmpty || double.tryParse(value) == null ? 'Enter valid price' : null,
+                    value!.isEmpty || double.tryParse(value) == null
+                        ? 'Enter valid price'
+                        : null,
                 onSaved: (value) => _price = double.parse(value!),
               ),
               const SizedBox(height: 16),
-              _selectedImagePath != null
+              _imageFile != null
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        _selectedImagePath!,
+                      child: Image.file(
+                        _imageFile!,
                         height: 100,
                         width: 100,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          _logger.e('Error loading image: $_selectedImagePath');
-                          return const Icon(Icons.error);
-                        },
                       ),
                     )
                   : Container(
@@ -296,7 +189,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     ),
               const SizedBox(height: 8),
               ElevatedButton.icon(
-                onPressed: _isLoading ? null : _pickImage,
+                onPressed: _pickImage,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepOrange,
                   shape: RoundedRectangleBorder(

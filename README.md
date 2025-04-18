@@ -252,7 +252,7 @@ Let me know if you'd like a custom badge or banner for the top of the README, or
 
 A new Flutter project.
 
-## Getting Started
+## Getting Started from here
 
 This project is a starting point for a Flutter application.
 
